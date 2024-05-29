@@ -40,20 +40,20 @@ try:
                     values_not_found()
                     return
                 centred_xy = auto.center(invoice_no_location)
-                xy = (centred_xy[0] - 60, centred_xy[1] + 30)
+                xy = (centred_xy[0] + 160, centred_xy[1] + 30)
 
-                auto.click(xy, clicks=2)
-                auto.dragTo(xy[0] - 500, xy[1], button='left')
+                auto.click(xy)
+                auto.dragTo(xy[0] - 160, xy[1], button='left')
                 auto.hotkey('command', 'c')
                 invoice_number = clipboard.clipboard_get()
             if string_var4.get():
                 total = string_var4.get()
             else:
                 location = auto.locateOnScreen('Total.JPG', grayscale=True, confidence=.5)
-                auto.moveTo(location[0], location[1] + 70)
-                auto.dragTo(location[0] - 110, location[1] + 70, button='left')
+                auto.moveTo(location[0] + 160, location[1] + 70)
+                auto.dragTo(location[0], location[1] + 70, button='left')
                 auto.hotkey('command', 'c')
-                total = clipboard.clipboard_get()[1:]
+                total = clipboard.clipboard_get()[1:].replace(',', '')
             comments = string_var5.get()
 
             ws.insert_rows(2)
@@ -67,12 +67,12 @@ try:
 
             label4.config(text=po_number)
             label6.config(text=invoice_number)
-            label8.config(text='$'+total)
+            label8.config(text='$' + total)
             label10.config(text=comments)
             post_input.delete(0, 25)
             invoice_input.delete(0, 25)
             total_input.delete(0, 25)
-
+            #
             global b_undo
             b_undo = Button(bottomframe, text="Undo", command=undo, width=6)
             b_undo.grid(row=8, column=3)
@@ -107,7 +107,7 @@ try:
             for row in ws.iter_rows(min_row=1, max_row=ws.max_row+1, min_col=1, max_col=1):
                 for cell in row:
                     if cell.value:
-                        if str(cell.value)[:4] == text[:4]:
+                        if text in str(cell.value)[:4]:
                             po_result = cell.value
                             invoice_result = cell.offset(column=1).value
                             total_result = cell.offset(column=2).value
